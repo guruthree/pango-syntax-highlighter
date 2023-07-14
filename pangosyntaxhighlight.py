@@ -18,6 +18,7 @@
 import pangopygments
 import argparse
 from pygments.lexers import get_all_lexers
+from pygments.styles import STYLE_MAP
 
 
 class ListAction(argparse.Action):
@@ -30,6 +31,10 @@ class ListAction(argparse.Action):
                     vals.append(l[0])
             print('Available languages: ' + ', '.join(vals))
             pass
+        elif option_string == '--list-styles':
+            vals = list(STYLE_MAP.keys())
+            vals.sort()
+            print('Available styles: ' + ', '.join(vals))
         else:
             print('uh oh')
         parser.exit()
@@ -39,13 +44,15 @@ parser = argparse.ArgumentParser(description='Syntax highlight code in Pango for
 parser.register('action', 'list', ListAction)
 parser.add_argument('inputfile', type=argparse.FileType('r'), help='the input file')
 parser.add_argument('outputfile', type=argparse.FileType('w'), help='the output file')
-parser.add_argument('--language', help='the syntax language of the input file (otherwise auto-detected)', default='auto')
+parser.add_argument('--language', help='the syntax language of the input file (otherwise auto-detected/auto)', default='auto')
 parser.add_argument('--list-languages', help='list available languages (lexers)', nargs=0, action='list')
+parser.add_argument('--style', help='highlighting style, e.g., vs', default='default')
+parser.add_argument('--list-styles', help='list available styles', nargs=0, action='list')
 args = parser.parse_args()
 
 input_data = args.inputfile.read()
 
-output_data = pangopygments.highlight(input_data, args.language)
+output_data = pangopygments.highlight(input_data, args.language, args.style)
 
 args.outputfile.write(output_data)
 

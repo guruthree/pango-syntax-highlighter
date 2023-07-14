@@ -12,6 +12,7 @@ Not copyrighted, in public domain.
 import pygments
 from pygments import lexers
 from pygments.formatter import Formatter
+from pygments.styles import get_style_by_name
 
 
 class PangoFormatter(Formatter):
@@ -67,7 +68,7 @@ class PangoFormatter(Formatter):
             outfile.write(stylebegin + lastval + styleend)
 
 
-def highlight(snippet, lang):
+def highlight(snippet, lang, style):
     """ snippet is the string of code snippets, and lang, the language name. """
     # The highlighter highlights (i.e., adds tags around) operators
     # (& and ;, here), so let's use a non-highlighted keyword, and escape them
@@ -93,9 +94,12 @@ def highlight(snippet, lang):
             print("Language %s is not supported." % lang)
             L = None
 
-    if L is not None:
+    S = get_style_by_name(style)
+
+    if L is not None and S is not None:
         print('Using languge: %s' % L.name)
-        snippet = pygments.highlight(snippet, L, PangoFormatter())
+        print('Using style: %s' % style)
+        snippet = pygments.highlight(snippet, L, PangoFormatter(style=S))
 
     if snippet[0] == '\n' and begin == '\n':
         begin = ''
