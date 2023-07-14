@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # vim:expandtab:shiftwidth=2:tabstop=2:smarttab:
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
