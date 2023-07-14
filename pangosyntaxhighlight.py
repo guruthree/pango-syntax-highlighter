@@ -18,15 +18,15 @@
 import pangopygments
 import argparse
 
-parser = argparse.ArgumentParser(description='Syntax highlight code in Pango format')
+parser = argparse.ArgumentParser(description='Syntax highlight code in Pango format using Pygments')
 parser.add_argument ('language', help='the syntax language of the input file')
-parser.add_argument('input', type=argparse.FileType('r'), help='the input file')
-parser.add_argument('output', type=argparse.FileType('w'), help='the output file')
+parser.add_argument('input-file', type=argparse.FileType('r'), help='the input file')
+parser.add_argument('output-file', type=argparse.FileType('w'), help='the output file')
 args= parser.parse_args()
 
-input_data= args.input.read()
+input_data = args.input.read()
 
-output_data= pangopygments.highlight(input_data, args.language)
+output_data = pangopygments.highlight(input_data, args.language)
 
 args.output.write(output_data)
 
