@@ -5,6 +5,7 @@ A pygments formatter for Pango text markup.
 
 Written by Soheil Hasss Yeganeh, 2014.
 Modified by Thiemo Leonhardt, 2021
+Modified by guruthree, 2023
 Not copyrighted, in public domain.
 """
 
@@ -66,20 +67,6 @@ class PangoFormatter(Formatter):
             outfile.write(stylebegin + lastval + styleend)
 
 
-__LEXERS = {
-    'c': lexers.CLexer,
-    'cpp': lexers.CppLexer,
-    'java': lexers.JavaLexer,
-    'go': lexers.GoLexer,
-    'py': lexers.PythonLexer,
-    'scala': lexers.ScalaLexer,
-    'glsl': lexers.GLShaderLexer,
-    'xml': lexers.XmlLexer,
-    'pas': lexers.DelphiLexer,
-    'php': lexers.PhpLexer,
-}
-
-
 def highlight(snippet, lang):
     """ snippet is the string of code snippets, and lang, the language name. """
     # The highlighter highlights (i.e., adds tags around) operators
@@ -97,10 +84,18 @@ def highlight(snippet, lang):
         end = '\n'
         snippet = snippet[:-1]
 
-    if __LEXERS.get(lang):
-        snippet = pygments.highlight(snippet, __LEXERS[lang](), PangoFormatter())
+    if lang == 'auto':
+        L = lexers.guess_lexer(snippet)
     else:
-        print("Language %s is not supported." % lang)
+        try:
+            L = lexers.get_lexer_by_name(lang)
+        except pygments.util.ClassNotFound:
+            print("Language %s is not supported." % lang)
+            L = None
+
+    if L is not None:
+        print('Using languge: %s' % L.name)
+        snippet = pygments.highlight(snippet, L, PangoFormatter())
 
     if snippet[0] == '\n' and begin == '\n':
         begin = ''

@@ -17,12 +17,31 @@
 
 import pangopygments
 import argparse
+from pygments.lexers import get_all_lexers
+
+
+class ListAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if option_string == '--list-languages':
+            vals = [];
+            for l in get_all_lexers():
+                l = l[1]
+                if len(l) >= 1:
+                    vals.append(l[0])
+            print('Available languages: ' + ', '.join(vals))
+            pass
+        else:
+            print('uh oh')
+        parser.exit()
+
 
 parser = argparse.ArgumentParser(description='Syntax highlight code in Pango format using Pygments')
-parser.add_argument ('language', help='the syntax language of the input file')
+parser.register('action', 'list', ListAction)
 parser.add_argument('inputfile', type=argparse.FileType('r'), help='the input file')
 parser.add_argument('outputfile', type=argparse.FileType('w'), help='the output file')
-args= parser.parse_args()
+parser.add_argument('--language', help='the syntax language of the input file (otherwise auto-detected)', default='auto')
+parser.add_argument('--list-languages', help='list available languages (lexers)', nargs=0, action='list')
+args = parser.parse_args()
 
 input_data = args.inputfile.read()
 
